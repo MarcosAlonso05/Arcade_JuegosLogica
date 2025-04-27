@@ -8,7 +8,7 @@ public class QueenBoard implements Board {
     private Piece[][] board;
     private boolean[][] possibilitys;
 
-    public QueenBoard(int size, boolean[][] possibilitys) {
+    public QueenBoard(int size) {
         this.size = size;
         this.board = new Piece[size][size];
         this.possibilitys = new boolean[size][size];
@@ -94,5 +94,13 @@ public class QueenBoard implements Board {
             }
         }
 
+    }
+
+    public boolean getPossibilitys(int x, int y) {
+        return this.possibilitys[x][y];
+    }
+
+    public Piece getPiece(int x, int y) {
+        return this.board[x][y];
     }
 }
