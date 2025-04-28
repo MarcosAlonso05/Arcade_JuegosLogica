@@ -1,6 +1,7 @@
 package com.example.application.view.nqueens;
 
 import com.example.application.controller.nqueens.NqueensController;
+import com.example.application.model.logic.BacktrackingSolver;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
@@ -19,6 +20,9 @@ public class NQueensView extends VerticalLayout {
     private final VerticalLayout contentLayout;
     private final int MIN_SIZE = 8;
     private final int MAX_SIZE = 15;
+    private BacktrackingSolver solver;
+    private boolean gameStarted = false;
+    private int queensPlaced = 0;
 
     public NQueensView() {
         setAlignItems(Alignment.CENTER);
@@ -102,6 +106,7 @@ public class NQueensView extends VerticalLayout {
                 cellButton.addClickListener(e -> {
                     if (controller.placeQueen(x, y)) {
                         refreshBoard();
+                        checkGameState();
                     }
                 });
 
@@ -110,6 +115,18 @@ public class NQueensView extends VerticalLayout {
             }
         }
     }
+
+    private void checkGameEnd() {
+        if (queensPlaced == size) {
+            if (playerWins()) {
+                showVictoryMessage();
+            } else {
+                showCorrectSolution();
+                showDefeatMessage();
+            }
+        }
+    }
+
 
     private void refreshBoard() {
         for (int i = 0; i < size; i++) {
@@ -128,7 +145,7 @@ public class NQueensView extends VerticalLayout {
 
         if (controller.getBoard().getPiece(x, y) != null) {
             button.setText("♛");
-            button.getStyle().set("color", "white"); // La reina ahora es blanca
+            button.getStyle().set("color", "white");
         } else {
             button.setText("");
         }
@@ -154,4 +171,67 @@ public class NQueensView extends VerticalLayout {
         controller.resetBoard();
         refreshBoard();
     }
+
+    private boolean playerWins() {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                boolean shouldBeQueen = solver.getSolutionBoard()[i][j];
+                boolean isQueen = controller.getBoard().getPiece(i, j) != null;
+                if (shouldBeQueen != isQueen) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private void showCorrectSolution() {
+        boolean[][] solution = solver.getSolutionBoard();
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (solution[i][j]) {
+                    buttons[i][j].setText("♛");
+                    buttons[i][j].getStyle().set("background-color", "green");
+                    buttons[i][j].getStyle().set("color", "white");
+                } else {
+                    buttons[i][j].setText("");
+                    buttons[i][j].getStyle().set("background-color", "rgba(255,255,255,0.7)");
+                }
+            }
+        }
+    }
+
+    private void showVictoryMessage() {
+        com.vaadin.flow.component.notification.Notification.show("¡Has ganado!");
+    }
+
+    private void showDefeatMessage() {
+        com.vaadin.flow.component.notification.Notification.show("Has perdido...");
+    }
+
+    private void checkGameState() {
+        if (controller.hasWon()) {
+            showEndMessage("¡Has ganado!");
+        } else if (controller.hasLost()) {
+            showEndMessage("¡Has perdido!");
+        }
+    }
+
+    private void showEndMessage(String message) {
+        contentLayout.removeAll();
+
+        H1 endMessage = new H1(message);
+        endMessage.getStyle()
+                .set("color", "white")
+                .set("font-size", "48px")
+                .set("text-align", "center");
+
+        Button restartButton = new Button("Volver a jugar", e -> showSizeSelector());
+        restartButton.getStyle()
+                .set("margin-top", "20px");
+
+        contentLayout.add(endMessage, restartButton);
+        contentLayout.setAlignItems(Alignment.CENTER);
+    }
+
 }
