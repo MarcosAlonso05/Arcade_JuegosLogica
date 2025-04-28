@@ -4,6 +4,7 @@ import com.example.application.controller.nqueens.NqueensController;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.router.Route;
@@ -16,6 +17,8 @@ public class NQueensView extends VerticalLayout {
     private Button[][] buttons;
     private int size = 8;
     private final VerticalLayout contentLayout;
+    private final int MIN_SIZE = 8;
+    private final int MAX_SIZE = 15;
 
     public NQueensView() {
         setAlignItems(Alignment.CENTER);
@@ -36,15 +39,19 @@ public class NQueensView extends VerticalLayout {
         title.getStyle().set("color", "white");
 
         IntegerField sizeInput = new IntegerField();
-        sizeInput.setValue(8);
-        sizeInput.setMin(4);
-        sizeInput.setMax(15);
+        sizeInput.setValue(8); // Valor por defecto
+        sizeInput.setMin(MIN_SIZE);
+        sizeInput.setMax(MAX_SIZE);
         sizeInput.setStepButtonsVisible(true);
 
         Button startButton = new Button("Crear tablero", e -> {
-            if (sizeInput.getValue() != null) {
-                size = sizeInput.getValue();
+            Integer value = sizeInput.getValue();
+            if (value != null && value >= MIN_SIZE && value <= MAX_SIZE) {
+                size = value;
                 startGame();
+            } else {
+                sizeInput.setErrorMessage("Introduce un número entre " + MIN_SIZE + " y " + MAX_SIZE);
+                sizeInput.setInvalid(true);
             }
         });
 
@@ -58,7 +65,19 @@ public class NQueensView extends VerticalLayout {
         this.buttons = new Button[size][size];
 
         contentLayout.removeAll();
-        contentLayout.add(boardContainer);
+
+        HorizontalLayout gameLayout = new HorizontalLayout();
+        gameLayout.setAlignItems(Alignment.CENTER);
+
+        Button resetButton = new Button("Resetear Tablero", e -> resetBoard());
+
+        VerticalLayout sideLayout = new VerticalLayout();
+        sideLayout.setAlignItems(Alignment.CENTER);
+        sideLayout.add(resetButton);
+        sideLayout.getStyle().set("margin-left", "20px");
+
+        gameLayout.add(boardContainer, sideLayout);
+        contentLayout.add(gameLayout);
 
         drawBoard();
     }
@@ -109,6 +128,7 @@ public class NQueensView extends VerticalLayout {
 
         if (controller.getBoard().getPiece(x, y) != null) {
             button.setText("♛");
+            button.getStyle().set("color", "white"); // La reina ahora es blanca
         } else {
             button.setText("");
         }
@@ -128,5 +148,10 @@ public class NQueensView extends VerticalLayout {
                 .set("overflow", "hidden")
                 .set("line-height", "1")
                 .set("font-size", "24px");
+    }
+
+    private void resetBoard() {
+        controller.resetBoard();
+        refreshBoard();
     }
 }
