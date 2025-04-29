@@ -1,6 +1,7 @@
 package com.example.application.model.factory.boards;
 
-import app.model.boards.Board;
+
+import com.example.application.model.boards.Board;
 
 public class QueenBoardFactory implements Board_Factory{
     @Override
