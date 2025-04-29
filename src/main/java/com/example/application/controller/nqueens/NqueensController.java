@@ -1,11 +1,14 @@
 package com.example.application.controller.nqueens;
 
 import com.example.application.model.boards.QueenBoard;
+import com.example.application.model.logic.BacktrackingSolver;
 import com.example.application.model.pieces.QueenPiece;
 
 public class NqueensController {
     private QueenBoard board;
     private int queensPlaced = 0;
+    private BacktrackingSolver solver;
+    private boolean firstMove = true;
 
     public NqueensController(int size) {
         board = new QueenBoard(size);
@@ -15,6 +18,10 @@ public class NqueensController {
         boolean placed = board.placePiece(x, y, new QueenPiece());
         if (placed) {
             queensPlaced++;
+            if (firstMove) {
+                solver = new BacktrackingSolver(board.getSize(), x, y);
+                firstMove = false;
+            }
         }
         return placed;
     }
@@ -30,6 +37,8 @@ public class NqueensController {
     public void resetBoard() {
         board.reset();
         queensPlaced = 0;
+        solver = null;
+        firstMove = true;
     }
 
     public QueenBoard getBoard() {
@@ -53,5 +62,12 @@ public class NqueensController {
             }
         }
         return false;
+    }
+
+    public boolean[][] getSolutionBoard() {
+        if (solver != null) {
+            return solver.getSolutionBoard();
+        }
+        return null;
     }
 }

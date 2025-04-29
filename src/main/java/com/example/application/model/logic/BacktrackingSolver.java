@@ -13,6 +13,7 @@ public class BacktrackingSolver {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 solutionBoard[i][j] = false;
+                possibilitys[i][j] = true;
             }
         }
 

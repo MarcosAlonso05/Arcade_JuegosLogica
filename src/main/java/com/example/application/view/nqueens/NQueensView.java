@@ -1,7 +1,6 @@
 package com.example.application.view.nqueens;
 
 import com.example.application.controller.nqueens.NqueensController;
-import com.example.application.model.logic.BacktrackingSolver;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
@@ -20,9 +19,8 @@ public class NQueensView extends VerticalLayout {
     private final VerticalLayout contentLayout;
     private final int MIN_SIZE = 8;
     private final int MAX_SIZE = 15;
-    private BacktrackingSolver solver;
-    private boolean gameStarted = false;
-    private int queensPlaced = 0;
+    private Button resetButton;
+    private VerticalLayout sideLayout;
 
     public NQueensView() {
         setAlignItems(Alignment.CENTER);
@@ -43,7 +41,7 @@ public class NQueensView extends VerticalLayout {
         title.getStyle().set("color", "white");
 
         IntegerField sizeInput = new IntegerField();
-        sizeInput.setValue(8); // Valor por defecto
+        sizeInput.setValue(8);
         sizeInput.setMin(MIN_SIZE);
         sizeInput.setMax(MAX_SIZE);
         sizeInput.setStepButtonsVisible(true);
@@ -73,9 +71,9 @@ public class NQueensView extends VerticalLayout {
         HorizontalLayout gameLayout = new HorizontalLayout();
         gameLayout.setAlignItems(Alignment.CENTER);
 
-        Button resetButton = new Button("Resetear Tablero", e -> resetBoard());
+        this.resetButton = new Button("Resetear Tablero", e -> resetBoard());
 
-        VerticalLayout sideLayout = new VerticalLayout();
+        this.sideLayout = new VerticalLayout();
         sideLayout.setAlignItems(Alignment.CENTER);
         sideLayout.add(resetButton);
         sideLayout.getStyle().set("margin-left", "20px");
@@ -115,18 +113,6 @@ public class NQueensView extends VerticalLayout {
             }
         }
     }
-
-    private void checkGameEnd() {
-        if (queensPlaced == size) {
-            if (playerWins()) {
-                showVictoryMessage();
-            } else {
-                showCorrectSolution();
-                showDefeatMessage();
-            }
-        }
-    }
-
 
     private void refreshBoard() {
         for (int i = 0; i < size; i++) {
@@ -172,21 +158,52 @@ public class NQueensView extends VerticalLayout {
         refreshBoard();
     }
 
-    private boolean playerWins() {
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                boolean shouldBeQueen = solver.getSolutionBoard()[i][j];
-                boolean isQueen = controller.getBoard().getPiece(i, j) != null;
-                if (shouldBeQueen != isQueen) {
-                    return false;
-                }
-            }
+    private void checkGameState() {
+        if (controller.hasWon()) {
+            showVictoryMessage();
+        } else if (controller.hasLost()) {
+            showLossMessage();
         }
-        return true;
+    }
+
+    private void showVictoryMessage() {
+        showEndGameMessage("¡Has ganado!");
+    }
+
+    private void showLossMessage() {
+        showCorrectSolution();
+        showEndGameMessage("¡Has perdido!");
+    }
+
+    private void showEndGameMessage(String message) {
+        if (resetButton != null && sideLayout != null) {
+            sideLayout.remove(resetButton);
+        }
+
+        VerticalLayout messageLayout = new VerticalLayout();
+        messageLayout.setAlignItems(Alignment.CENTER);
+
+        H1 endMessage = new H1(message);
+        endMessage.getStyle()
+                .set("color", "white")
+                .set("font-size", "32px")
+                .set("text-align", "center");
+
+        Button restartButton = new Button("Volver a jugar", e -> showSizeSelector());
+        restartButton.getStyle().set("margin-top", "10px");
+
+        messageLayout.add(endMessage, restartButton);
+        if (sideLayout != null) {
+            sideLayout.add(messageLayout);
+        }
     }
 
     private void showCorrectSolution() {
-        boolean[][] solution = solver.getSolutionBoard();
+        boolean[][] solution = controller.getSolutionBoard();
+        if (solution == null) {
+            return;
+        }
+
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 if (solution[i][j]) {
@@ -200,38 +217,4 @@ public class NQueensView extends VerticalLayout {
             }
         }
     }
-
-    private void showVictoryMessage() {
-        com.vaadin.flow.component.notification.Notification.show("¡Has ganado!");
-    }
-
-    private void showDefeatMessage() {
-        com.vaadin.flow.component.notification.Notification.show("Has perdido...");
-    }
-
-    private void checkGameState() {
-        if (controller.hasWon()) {
-            showEndMessage("¡Has ganado!");
-        } else if (controller.hasLost()) {
-            showEndMessage("¡Has perdido!");
-        }
-    }
-
-    private void showEndMessage(String message) {
-        contentLayout.removeAll();
-
-        H1 endMessage = new H1(message);
-        endMessage.getStyle()
-                .set("color", "white")
-                .set("font-size", "48px")
-                .set("text-align", "center");
-
-        Button restartButton = new Button("Volver a jugar", e -> showSizeSelector());
-        restartButton.getStyle()
-                .set("margin-top", "20px");
-
-        contentLayout.add(endMessage, restartButton);
-        contentLayout.setAlignItems(Alignment.CENTER);
-    }
-
 }
