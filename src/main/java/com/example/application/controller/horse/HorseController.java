@@ -50,19 +50,16 @@ public class HorseController {
     public boolean solve() {
         if (board.getHorse() == null) return false;
 
-        // Guardar estado actual
         int[][] originalBoard = new int[board.getSize()][board.getSize()];
         for (int i = 0; i < board.getSize(); i++) {
             System.arraycopy(board.getBoard()[i], 0, originalBoard[i], 0, board.getSize());
         }
 
-        // Limpiar tablero excepto posición inicial
         board.clearExceptStart();
 
         boolean result = logic.solve(board);
 
         if (!result) {
-            // Restaurar tablero original si no hay solución
             for (int i = 0; i < board.getSize(); i++) {
                 System.arraycopy(originalBoard[i], 0, board.getBoard()[i], 0, board.getSize());
             }

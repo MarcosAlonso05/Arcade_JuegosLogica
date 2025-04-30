@@ -20,13 +20,11 @@ public class KnightTourLogic {
         int[][] solution = new int[size][size];
         solution[startX][startY] = 1;
 
-        // Usamos un objeto para compartir el resultado entre hilos
         class Result {
             boolean solved = false;
         }
         Result result = new Result();
 
-        // Creamos un hilo para el solver con timeout
         Thread solverThread = new Thread(() -> {
             result.solved = solveUtil(solution, startX, startY, 2, size, System.currentTimeMillis());
         });
@@ -44,7 +42,6 @@ public class KnightTourLogic {
         }
 
         if (result.solved) {
-            // Copiar solución al tablero real
             for (int i = 0; i < size; i++) {
                 System.arraycopy(solution[i], 0, board.getBoard()[i], 0, size);
             }
@@ -56,7 +53,7 @@ public class KnightTourLogic {
 
     private boolean solveUtil(int[][] board, int x, int y, int moveCount, int size, long startTime) {
         if (System.currentTimeMillis() - startTime > TIMEOUT_MS) {
-            return false; // Timeout
+            return false;
         }
 
         if (moveCount > size * size) {
@@ -73,7 +70,7 @@ public class KnightTourLogic {
                 if (solveUtil(board, nextX, nextY, moveCount + 1, size, startTime)) {
                     return true;
                 } else {
-                    board[nextX][nextY] = 0; // backtrack
+                    board[nextX][nextY] = 0;
                 }
             }
         }

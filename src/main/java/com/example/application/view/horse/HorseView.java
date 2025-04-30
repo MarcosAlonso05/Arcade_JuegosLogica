@@ -86,15 +86,14 @@ public class HorseView extends VerticalLayout {
     }
 
     private void drawBoard() {
-        // Limpieza completa del contenedor
         boardContainer.removeAll();
         boardContainer.getStyle()
                 .set("display", "grid")
                 .set("grid-template-columns", "repeat(" + size + ", 50px)")
                 .set("gap", "2px")
-                .set("justify-content", "center");
+                .set("justify-content", "center")
+                .set("align-items", "center");
 
-        // Reinicialización de la matriz de botones
         buttons = new Button[size][size];
 
         for (int i = 0; i < size; i++) {
@@ -103,6 +102,14 @@ public class HorseView extends VerticalLayout {
                 cellButton.getStyle()
                         .set("width", "50px")
                         .set("height", "50px")
+                        .set("min-width", "0")
+                        .set("min-height", "0")
+                        .set("padding", "0")
+                        .set("margin", "0")
+                        .set("border", "none")
+                        .set("box-sizing", "border-box")
+                        .set("flex-shrink", "0")
+                        .set("overflow", "hidden")
                         .set("background-color", "#424242")
                         .set("color", "white")
                         .set("font-size", "24px")
@@ -163,14 +170,12 @@ public class HorseView extends VerticalLayout {
         int[][] board = controller.getBoard().getBoard();
         HorsePiece horse = controller.getBoard().getHorse();
 
-        // Resetear estilo
         button.getStyle()
                 .set("background-color", "#424242")
                 .set("color", "white");
         button.setText("");
 
         if (solutionMode) {
-            // MODO SOLUCIÓN (números)
             if (board[x][y] > 0) {
                 button.setText(String.valueOf(board[x][y]));
                 if (board[x][y] == 1) {
@@ -182,7 +187,6 @@ public class HorseView extends VerticalLayout {
                 }
             }
         } else {
-            // MODO JUEGO NORMAL (caballos)
             if (horse != null && horse.getX() == x && horse.getY() == y) {
                 button.setText("♞");
                 button.getStyle().set("background-color", "#2196F3"); // Actual (azul)
@@ -201,23 +205,20 @@ public class HorseView extends VerticalLayout {
             return;
         }
 
-        solutionMode = true;
-        refreshBoard(); // Actualizar visualización antes de resolver
+        disableAllButtons();
 
-        new Thread(() -> {
-            boolean solved = controller.solve();
+        boolean solved = controller.solve();
 
-            getUI().ifPresent(ui -> ui.access(() -> {
-                if (solved) {
-                    refreshBoard();
-                    Notification.show("Solución encontrada").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-                } else {
-                    Notification.show("No existe solución desde esta posición").addThemeVariants(NotificationVariant.LUMO_ERROR);
-                    solutionMode = false;
-                    refreshBoard();
-                }
-            }));
-        }).start();
+        solutionMode = solved;
+        refreshBoard();
+        if (solved) {
+            refreshBoard();
+            Notification.show("Solución encontrada").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+        } else {
+            Notification.show("No existe solución desde esta posición").addThemeVariants(NotificationVariant.LUMO_ERROR);
+            solutionMode = false;
+            refreshBoard();
+        }
     }
 
 
