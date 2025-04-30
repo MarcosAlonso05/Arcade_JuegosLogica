@@ -34,10 +34,22 @@ public class MainView extends VerticalLayout {
 
         VerticalLayout logoPanel = createArcadeLogoPanel();
 
+        Button dataButton = new Button("Ver Datos", e -> UI.getCurrent().navigate("data"));
+        dataButton.getStyle()
+                .set("position", "absolute")
+                .set("top", "10px")
+                .set("right", "10px")
+                .set("background-color", "#FF00FF")
+                .set("color", "white")
+                .set("border", "2px solid #FF00FF")
+                .set("border-radius", "5px")
+                .set("cursor", "pointer");
+
         mainContent.add(buttonPanel, logoPanel);
         mainContent.expand(logoPanel);
 
         add(mainContent);
+        add(dataButton);
     }
 
     private Div createEnhancedStarsBackground() {
@@ -241,4 +253,6 @@ public class MainView extends VerticalLayout {
 
         return corner;
     }
+
+
 }

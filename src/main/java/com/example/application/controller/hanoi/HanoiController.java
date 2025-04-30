@@ -13,6 +13,9 @@ public class HanoiController {
     private int selectedTower = -1;
     private int disks;
 
+    private HanoiPiece lastMovedDisk;
+    private int lastSourceTower;
+
     public HanoiController(int disks) {
         this.disks = disks;
         initializeBoard();
@@ -46,6 +49,9 @@ public class HanoiController {
         HanoiPiece disk = (HanoiPiece) fromTower.peek();
         HanoiPieceFactory pieceFactory = new HanoiPieceFactory(disk.getSize());
 
+        lastMovedDisk = disk;
+        lastSourceTower = from;
+
         if (board.placePiece(to, 0, pieceFactory.createPiece())) {
             board.removePiece(from, 0);
             return true;
@@ -56,6 +62,8 @@ public class HanoiController {
     public void resetBoard() {
         board.reset();
         selectedTower = -1;
+        lastMovedDisk = null;  // Resetear el último disco movido
+        lastSourceTower = -1;  // Resetear la torre de origen
     }
 
     public HanoiBoard getBoard() {
@@ -72,6 +80,14 @@ public class HanoiController {
 
     public int getMoves() {
         return board.getMoves();
+    }
+
+    public HanoiPiece getMovedDisk() {
+        return lastMovedDisk;
+    }
+
+    public int getLastSourceTower() {
+        return lastSourceTower;
     }
 
     public void solve() {

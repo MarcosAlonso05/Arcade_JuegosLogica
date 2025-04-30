@@ -1,7 +1,9 @@
 package com.example.application.view.horse;
 
+import com.example.application.controller.TimerController;
 import com.example.application.controller.horse.HorseController;
 import com.example.application.model.pieces.HorsePiece;
+import com.example.application.service.GameRecordService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
@@ -12,6 +14,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.router.Route;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Route("horse")
 public class HorseView extends VerticalLayout {
@@ -25,6 +28,11 @@ public class HorseView extends VerticalLayout {
     private Button solveButton;
     private Button resetButton;
     private boolean solutionMode = false;
+
+    private TimerController timerController = new TimerController();
+
+    @Autowired
+    private GameRecordService recordService;
 
 
     public HorseView() {
@@ -260,6 +268,8 @@ public class HorseView extends VerticalLayout {
     private void checkGameState() {
         if (controller.hasWon()) {
             showEndMessage("¡Victoria! Completaste el tablero.", "green");
+            String tableroFinal = generarTextoDelTablero(size);
+            saveGameResult(tableroFinal);
         } else if (controller.hasLost()) {
             showEndMessage("¡Derrota! No hay movimientos posibles.", "red");
         }
@@ -274,5 +284,23 @@ public class HorseView extends VerticalLayout {
                 .set("margin-top", "20px");
 
         contentLayout.add(messageDiv);
+    }
+
+    private void saveGameResult(String finalBoard) {
+        timerController.stopTimer();
+        recordService.saveRecord(
+                "KINGSTOUR",
+                finalBoard,
+                timerController.getElapsedTimeMillis(),
+                timerController.getFormattedTime()
+        );
+    }
+    private String generarTextoDelTablero(int size) {
+        StringBuilder sb = new StringBuilder();
+        for (int row = 0; row < size; row++) {
+            sb.append("C".repeat(1)).append(".".repeat(size - 1));
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 }
