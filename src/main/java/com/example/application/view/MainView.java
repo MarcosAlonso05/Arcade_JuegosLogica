@@ -18,12 +18,6 @@ public class MainView extends VerticalLayout {
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
 
-        // Botón de registro en la esquina superior derecha
-        Button registerButton = new Button("Registrarse", e -> UI.getCurrent().navigate("register"));
-        registerButton.getStyle().set("position", "absolute")
-                .set("top", "10px")
-                .set("right", "10px");
-
         // Título opcional
         H1 title = new H1("Máquina de Puzzles Lógicos");
         title.getStyle().set("color", "white");
@@ -44,6 +38,6 @@ public class MainView extends VerticalLayout {
         VerticalLayout buttonLayout = new VerticalLayout(queensButton, knightButton, hanoiButton);
         buttonLayout.setAlignItems(Alignment.CENTER);
 
-        add(registerButton, title, buttonLayout);
+        add(title, buttonLayout);
     }
 }
