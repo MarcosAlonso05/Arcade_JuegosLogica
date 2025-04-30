@@ -4,11 +4,15 @@ import com.example.application.model.boards.HorseBoard;
 import com.example.application.model.factory.Piece.HorsePieceFactory;
 import com.example.application.model.factory.boards.HorseBoardFactory;
 import com.example.application.model.logic.KnightTourLogic;
+import com.example.application.model.pieces.HorsePiece;
 
 public class HorseController {
     private HorseBoard board;
     private KnightTourLogic logic;
     private int size;
+    private int startX;
+    private int startY;
+    private boolean firstMove = true;
 
     public HorseController(int size) {
         this.size = size;
@@ -22,6 +26,11 @@ public class HorseController {
     }
 
     public boolean placeHorse(int x, int y) {
+        if (firstMove) {
+            startX = x;
+            startY = y;
+            firstMove = false;
+        }
         HorsePieceFactory pieceFactory = new HorsePieceFactory(x, y);
         return board.placePiece(x, y, pieceFactory.createPiece());
     }
@@ -56,6 +65,7 @@ public class HorseController {
         }
 
         board.clearExceptStart();
+        board.placePiece(startX, startY, new HorsePiece(startX, startY)); // Asegurar posición inicial
 
         boolean result = logic.solve(board);
 
@@ -70,6 +80,7 @@ public class HorseController {
 
     public void resetBoard() {
         board.reset();
+        firstMove = true;
     }
 
     public HorseBoard getBoard() {
@@ -92,7 +103,6 @@ public class HorseController {
         int x = board.getHorse().getX();
         int y = board.getHorse().getY();
 
-        // Verificar si hay movimientos posibles
         for (int i = 0; i < 8; i++) {
             int nextX = x + KnightTourLogic.getXMoves()[i];
             int nextY = y + KnightTourLogic.getYMoves()[i];

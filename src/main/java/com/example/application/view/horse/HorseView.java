@@ -179,21 +179,21 @@ public class HorseView extends VerticalLayout {
             if (board[x][y] > 0) {
                 button.setText(String.valueOf(board[x][y]));
                 if (board[x][y] == 1) {
-                    button.getStyle().set("background-color", "#2196F3"); // Inicio (azul)
+                    button.getStyle().set("background-color", "#2196F3");
                 } else if (board[x][y] == size * size) {
-                    button.getStyle().set("background-color", "#4CAF50"); // Fin (verde)
+                    button.getStyle().set("background-color", "#4CAF50");
                 } else if (board[x][y] == 2) {
-                    button.getStyle().set("background-color", "#FF9800"); // Segundo movimiento (naranja)
+                    button.getStyle().set("background-color", "#FF9800");
                 }
             }
         } else {
             if (horse != null && horse.getX() == x && horse.getY() == y) {
                 button.setText("♞");
-                button.getStyle().set("background-color", "#2196F3"); // Actual (azul)
+                button.getStyle().set("background-color", "#2196F3");
             } else if (board[x][y] > 0) {
                 button.setText("♞");
                 if (board[x][y] == controller.getBoard().getLastMoveNumber()) {
-                    button.getStyle().set("background-color", "#4CAF50"); // Último (verde)
+                    button.getStyle().set("background-color", "#4CAF50");
                 }
             }
         }
@@ -206,11 +206,11 @@ public class HorseView extends VerticalLayout {
         }
 
         disableAllButtons();
+        solutionMode = true;
+        refreshBoard();
 
         boolean solved = controller.solve();
 
-        solutionMode = solved;
-        refreshBoard();
         if (solved) {
             refreshBoard();
             Notification.show("Solución encontrada").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
@@ -219,6 +219,7 @@ public class HorseView extends VerticalLayout {
             solutionMode = false;
             refreshBoard();
         }
+        enableAllButtons();
     }
 
 

@@ -78,6 +78,8 @@ public class HorseBoard implements Board {
     }
 
     public void clearExceptStart() {
+        if (horse == null) return;
+
         int startX = horse.getX();
         int startY = horse.getY();
         int startValue = board[startX][startY];
