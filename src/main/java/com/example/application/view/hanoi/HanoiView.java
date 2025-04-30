@@ -1,8 +1,10 @@
 package com.example.application.view.hanoi;
 
+import com.example.application.controller.TimerController;
 import com.example.application.controller.hanoi.HanoiController;
 import com.example.application.model.pieces.HanoiPiece;
 import com.example.application.model.pieces.Piece;
+import com.example.application.service.GameRecordService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
@@ -13,6 +15,10 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.router.Route;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Route("hanoi")
 public class HanoiView extends VerticalLayout {
@@ -26,11 +32,21 @@ public class HanoiView extends VerticalLayout {
     private Button resetButton;
     private H1 movesLabel;
 
+    private List<String> movements;
+
+    private TimerController timerController = new TimerController();
+
+    @Autowired
+    private GameRecordService recordService;
+
+
     public HanoiView() {
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
         setSizeFull();
         getStyle().set("background-color", "black");
+
+        movements = new ArrayList<>();
 
         contentLayout = new VerticalLayout();
         contentLayout.setAlignItems(Alignment.CENTER);
@@ -173,10 +189,23 @@ public class HanoiView extends VerticalLayout {
         boolean validMove = controller.selectTower(towerIndex);
         refreshBoard();
 
-        if (controller.hasWon()) {
-            Notification.show("¡Felicidades! Has resuelto las Torres de Hanoi en " +
-                            controller.getMoves() + " movimientos")
-                    .addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+        if (validMove) {
+            String movement = "Mover disco " + controller.getMovedDisk() +
+                    " de torre " + controller.getLastSourceTower() +
+                    " a torre " + towerIndex;
+            movements.add(movement);  // Añadimos el movimiento a la lista
+
+            movesLabel.setText("Movimientos: " + controller.getMoves());
+
+            // Si el jugador ha ganado, se guarda el resultado
+            if (controller.hasWon()) {
+                Notification.show("¡Felicidades! Has resuelto las Torres de Hanoi en " +
+                                controller.getMoves() + " movimientos")
+                        .addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+
+                String tableroFinal = generarTextoDeMovimientos(movements);
+                saveGameResult(tableroFinal);  // Guardar los movimientos realizados
+            }
         }
     }
 
@@ -244,4 +273,26 @@ public class HanoiView extends VerticalLayout {
         controller.resetBoard();
         refreshBoard();
     }
+
+    private void saveGameResult(String movements) {
+        if (movements.length() > 255) {
+            movements = movements.substring(0, 255);
+        }
+        timerController.stopTimer();
+        recordService.saveRecord(
+                "HANOI",
+                movements,
+                timerController.getElapsedTimeMillis(),
+                timerController.getFormattedTime()
+        );
+    }
+
+    private String generarTextoDeMovimientos(List<String> movements) {
+        StringBuilder sb = new StringBuilder();
+        for (String movement : movements) {
+            sb.append(movement).append("\n");
+        }
+        return sb.toString();
+    }
+
 }

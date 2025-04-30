@@ -32,7 +32,6 @@ public class NqueensController {
             if (firstMove) {
                 solver = new BacktrackingSolver(board.getSize(), x, y);
                 firstMove = false;
-                timerController.startTimer();
             }
             if (hasWon()) {
                 timerController.stopTimer();

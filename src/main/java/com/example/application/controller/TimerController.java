@@ -9,8 +9,19 @@ public class TimerController {
         this.timer = new Timer();
     }
 
-    public void startTimer() {
+    public void startTimer(Runnable updateUI) {
         timer.start();
+
+        new Thread(() -> {
+            while (timer.isRunning()) {
+                try {
+                    Thread.sleep(1000); // Esperar 1 segundo
+                    updateUI.run();  // Actualizar la UI
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }).start();
     }
 
     public void stopTimer() {

@@ -1,6 +1,8 @@
 package com.example.application.view.nqueens;
 
+import com.example.application.controller.TimerController;
 import com.example.application.controller.nqueens.NqueensController;
+import com.example.application.service.GameRecordService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
@@ -9,6 +11,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.router.Route;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Route("nqueens")
 public class NQueensView extends VerticalLayout {
@@ -22,6 +25,12 @@ public class NQueensView extends VerticalLayout {
     private final int MAX_SIZE = 15;
     private Button resetButton;
     private VerticalLayout sideLayout;
+
+    private TimerController timerController = new TimerController();
+
+    @Autowired
+    private GameRecordService recordService;
+
 
     public NQueensView() {
         setAlignItems(Alignment.CENTER);
@@ -188,6 +197,8 @@ public class NQueensView extends VerticalLayout {
 
     private void showVictoryMessage() {
         showEndGameMessage("¡Has ganado!");
+        String tableroFinal = generarTextoDelTablero(size);
+        saveGameResult(tableroFinal);
     }
 
     private void showLossMessage() {
@@ -237,4 +248,22 @@ public class NQueensView extends VerticalLayout {
             }
         }
     }
-}
+
+    private void saveGameResult(String finalBoard) {
+        timerController.stopTimer();
+        recordService.saveRecord(
+                "NQUEENS",
+                finalBoard,
+                timerController.getElapsedTimeMillis(),
+                timerController.getFormattedTime()
+        );
+    }
+    private String generarTextoDelTablero(int size) {
+        StringBuilder sb = new StringBuilder();
+        for (int row = 0; row < size; row++) {
+            sb.append("Q".repeat(1)).append(".".repeat(size - 1));
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
+} 
