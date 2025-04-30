@@ -1,6 +1,7 @@
 package com.example.application.view.nqueens;
 
 import com.example.application.controller.nqueens.NqueensController;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
@@ -34,7 +35,26 @@ public class NQueensView extends VerticalLayout {
         add(contentLayout);
 
         showSizeSelector();
+
+        add(createBackButton());
     }
+
+    private Button createBackButton() {
+        Button backButton = new Button("VOLVER AL MENÚ", e -> UI.getCurrent().navigate(""));
+        backButton.getStyle()
+                .set("font-family", "'Press Start 2P', cursive")
+                .set("font-size", "0.8rem")
+                .set("color", "#00FFFF")
+                .set("background-color", "rgba(0, 0, 0, 0.7)")
+                .set("border", "3px solid #00FFFF")
+                .set("border-radius", "5px")
+                .set("cursor", "pointer")
+                .set("text-shadow", "0 0 5px #00FFFF")
+                .set("box-shadow", "0 0 10px #00FFFF")
+                .set("margin", "1rem");
+        return backButton;
+    }
+
 
     private void showSizeSelector() {
         H1 title = new H1("Introduce el tamaño del tablero:");
