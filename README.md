@@ -1,6 +1,33 @@
-# Logic Arcade README
+# ArCade LoGico - Máquina de Puzzles Lógicos
 
-- [ ] TODO Replace or update this README with instructions relevant to your application
+---
+
+## Enlace al repositorio
+
+```
+https://github.com/MarcosAlonso05/LogicArcade
+```
+
+## Juegos Disponibles
+
+♕ **N Reinas**  
+Coloca reinas en un tablero sin que se ataquen entre sí.
+
+♞ **Recorrido del Caballo**  
+Mueve un caballo por todo el tablero sin repetir casillas.
+
+⛓ **Torres de Hanoi**  
+Resuelve el clásico puzzle moviendo discos entre torres.
+
+## Características Técnicas
+
+- Arquitectura MVC (Modelo-Vista-Controlador)
+- Patrón Abstract Factory para creación de componentes
+- Interfaz estilo arcade retro con animaciones CSS
+- Diseño responsive y adaptable
+---
+
+Base de datos experimental
 
 To start the application in development mode, import it into your IDE and run the `Application` class. 
 You can also start the application from the command line by running: 
@@ -15,9 +42,3 @@ To build the application in production mode, run:
 ./mvnw -Pproduction package
 ```
 
-## Getting Started
-
-The [Getting Started](https://vaadin.com/docs/latest/getting-started) guide will quickly familiarize you with your new
-Logic Arcade implementation. You'll learn how to set up your development environment, understand the project 
-structure, and find resources to help you add muscles to your skeleton — transforming it into a fully-featured 
-application.
