@@ -109,17 +109,15 @@ public class HanoiView extends VerticalLayout {
                     .set("margin", "0 10px")
                     .set("position", "relative");
 
-            // Poste de la torre (ahora va primero, en la parte inferior)
             Div pole = new Div();
             pole.getStyle()
                     .set("width", "10px")
                     .set("height", "300px")
                     .set("background-color", "#795548")
                     .set("position", "absolute")
-                    .set("bottom", "20px")  // 20px es la altura de la base
+                    .set("bottom", "20px")
                     .set("left", "70px");
 
-            // Base de la torre (ahora va en la parte inferior)
             Div base = new Div();
             base.getStyle()
                     .set("width", "120px")
@@ -130,7 +128,6 @@ public class HanoiView extends VerticalLayout {
                     .set("bottom", "0")
                     .set("left", "15px");
 
-            // Contenedor para los discos
             Div disksContainer = new Div();
             disksContainer.getStyle()
                     .set("display", "flex")
@@ -139,7 +136,7 @@ public class HanoiView extends VerticalLayout {
                     .set("width", "100%")
                     .set("height", "300px")
                     .set("position", "absolute")
-                    .set("bottom", "20px")  // Se apoya sobre la base
+                    .set("bottom", "20px")
                     .set("z-index", "1");
 
             final int towerIndex = i;
@@ -198,22 +195,21 @@ public class HanoiView extends VerticalLayout {
 
     private String getDiskColor(int size) {
         String[] colors = {
-                "#FF5252", // Rojo
-                "#FF4081", // Rosa
-                "#E040FB", // Púrpura
-                "#7C4DFF", // Violeta
-                "#536DFE", // Azul
-                "#448AFF", // Azul claro
-                "#40C4FF", // Cian
-                "#18FFFF", // Turquesa
-                "#64FFDA", // Verde agua
-                "#69F0AE", // Verde claro
-                "#B2FF59", // Lima
-                "#EEFF41", // Amarillo
-                "#FFFF00", // Amarillo fuerte
-                "#FFD740", // Ámbar
-                "#FFAB40", // Naranja
-                "#FF6E40"  // Naranja rojizo
+                "#FF5252",
+                "#FF4081",
+                "#E040FB",
+                "#7C4DFF",
+                "#536DFE",
+                "#40C4FF",
+                "#18FFFF",
+                "#64FFDA",
+                "#69F0AE",
+                "#B2FF59",
+                "#EEFF41",
+                "#FFFF00",
+                "#FFD740",
+                "#FFAB40",
+                "#FF6E40"
         };
         return colors[(size - 1) % colors.length];
     }

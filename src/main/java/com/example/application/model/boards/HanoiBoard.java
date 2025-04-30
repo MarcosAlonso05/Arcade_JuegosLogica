@@ -24,7 +24,6 @@ public class HanoiBoard implements Board {
         for (Stack<Piece> tower : towers) {
             tower.clear();
         }
-        // Llenar la primera torre con discos
         for (int i = disks; i >= 1; i--) {
             towers[0].push(new HanoiPiece(i));
         }
